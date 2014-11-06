@@ -13,6 +13,7 @@ readExpression expression = case parse parseExpression "lisp" expression of
     
 parseExpression :: Parser LispValue
 parseExpression = try parseString 
+              <|> try parseBool
               <|> try parseNumber
               <|> try parseFloat
               <|> try parseCharacter
@@ -40,12 +41,18 @@ parseAtom :: Parser LispValue
 parseAtom = do
     first <- letter <|> symbol
     rest <- many $ letter <|> digit <|> symbol
-    let atom = first : rest
-    let value = case atom of 
-            "#t" -> Bool True
-            "#f" -> Bool False
-            _    -> Atom atom
-    return value
+    return $ Atom (first : rest)
+
+parseBool :: Parser LispValue
+parseBool = do
+    char '#'
+    trueChar <|> falseChar where
+    trueChar = do
+        char 't'
+        return $ Bool True
+    falseChar = do
+        char 'f'
+        return $ Bool False
     
 parseNumber :: Parser LispValue
 parseNumber = do
