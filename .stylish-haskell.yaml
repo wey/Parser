@@ -1,0 +1,13 @@
+columns: 120
+steps:
+- unicode_syntax:
+    add_language_pragma: true
+- imports:
+    align: global
+- language_pragmas:
+    style: vertical
+    remove_redundant: true
+- records: {}
+- tabs:
+    spaces: 4
+- trailing_whitespace: {}

@@ -22,7 +22,7 @@ main = do
             fileList <- getDirectoryContents "."
             let testFiles = filter checkExtension fileList where
                 checkExtension path = takeExtension path ==  ".exp"
-            results <- mapM parseFile testFiles
+            results <- mapM parseFile $ reverse testFiles
             return $ intercalate "\n" results
     putStrLn result
             
@@ -34,14 +34,6 @@ parseFile path = do
     
 parseExpression :: String -> IO String
 parseExpression expression = return $ readExpression expression    
-    
-getExpression :: IO String
-getExpression = do 
-    args <- getArgs
-    case args of
-        ["-f", file]-> readFile file
-        ["-e", expression]-> return expression
-        _ -> throw $ PatternMatchFail "Incorrect Parameters"
 
 parseArguments :: IO ProgramAction
 parseArguments = do
@@ -56,3 +48,7 @@ parseArguments = do
 data ProgramAction = File FilePath
                    | Expression String
                    | RunTest
+
+
+
+

@@ -22,11 +22,15 @@ parseString = do
     char '"' -- trailing Quote
     return $ String content
     where
-        validChar = try escapedQuote <|> noneOf "\""
-        escapedQuote = do
+        validChar = try (escaped '"' '"')
+                <|> try (escaped 'n' '\n')
+                <|> try (escaped 't' '\t')
+                <|> try (escaped '\\' '\\') 
+                <|> noneOf "\""
+        escaped character returnChar = do
             char '\\'
-            char '"'
-            return '"'
+            char character
+            return returnChar
 
 parseAtom :: Parser LispValue
 parseAtom = do
