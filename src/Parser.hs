@@ -12,14 +12,18 @@ readExpression expression = case parse parseExpression "lisp" expression of
     Right match -> "Found a match: " ++ show match
     
 parseExpression :: Parser LispValue
-parseExpression = parseAtom <|> parseString <|> parseNumber
+parseExpression = try parseString 
+              <|> try parseNumber
+              <|> try parseFloat
+              <|> try parseCharacter
+              <|> try parseAtom
     
 
 parseString :: Parser LispValue
 parseString = do
-    char '"' -- leading Quote
+    char '"'
     content <- many validChar
-    char '"' -- trailing Quote
+    char '"'
     return $ String content
     where
         validChar = try (escaped '"' '"')
@@ -49,8 +53,23 @@ parseNumber = do
     let number = read digits
     return $ Number number 
 
--- liftM (Number . read) (many1 digit)
+parseFloat :: Parser LispValue
+parseFloat = parseNumber
 
+parseCharacter :: Parser LispValue
+parseCharacter = do
+    char '#'
+    char '\\'
+    spaceChar <|> newlineChar <|> singleChar where
+        spaceChar = do
+            string "space" 
+            return $ Character ' '
+        newlineChar = do
+            string "newline" 
+            return $ Character '\n'
+        singleChar = do
+            character <- anyChar
+            return $ Character character
 
 symbol :: Parser Char
 symbol = oneOf "!$%&|*+-/:<=?>@^_~#"
@@ -64,6 +83,8 @@ data LispValue = Atom String
                | DottedList [LispValue] LispValue
                | Number Integer
                | String String
+               | Character Char
+               | FloatingPoint Float
                | Bool Bool
 
 
@@ -73,6 +94,8 @@ instance Show LispValue where
     show (DottedList values lastValue) = "[" ++ intercalate ", " (map show values) ++ " . " ++ show lastValue ++ "]"
     show (Number n) = "Number: " ++ show n
     show (String s) = "String: " ++ s
+    show (Character c) = "Character: " ++ show c
+    show (FloatingPoint f) = "Float: " ++ show f
     show (Bool b) = "Bool: " ++ show b
     
     
