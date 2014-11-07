@@ -33,7 +33,7 @@ parseFile path = do
     parseExpression content 
     
 parseExpression :: String -> IO String
-parseExpression expression = return $ readExpression expression    
+parseExpression expression = return $ evaluateExpression expression    
 
 parseArguments :: IO ProgramAction
 parseArguments = do

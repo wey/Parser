@@ -1,15 +1,17 @@
 {-# OPTIONS_GHC -fno-warn-unused-do-bind #-}
 
-module Parser(readExpression) where
+module Parser(evaluateExpression, readExpression) where
 
 import Data.List
 import Text.ParserCombinators.Parsec hiding (spaces)
 
-
-readExpression :: String -> String
-readExpression expression = case parse parseExpression "lisp" expression of
+evaluateExpression :: String -> String
+evaluateExpression expression = case readExpression expression of
     Left errorMessage -> "Input did not match: " ++ show errorMessage
     Right match -> "Found a match: " ++ show match
+
+readExpression :: String -> Either ParseError LispValue
+readExpression = parse parseExpression "lisp"
     
 parseExpression :: Parser LispValue
 parseExpression = try parseString 
