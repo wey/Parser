@@ -49,3 +49,6 @@ Temporary Items
 
 # Eclipse project file
 .project
+
+# HTF folder
+.HTF

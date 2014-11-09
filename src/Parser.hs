@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -fno-warn-unused-do-bind #-}
 
-module Parser(evaluateExpression, readExpression) where
+module Parser where
 
 import Data.List
 import Text.ParserCombinators.Parsec hiding (spaces)
@@ -107,7 +107,16 @@ instance Show LispValue where
     show (FloatingPoint f) = "Float: " ++ show f
     show (Bool b) = "Bool: " ++ show b
     
-    
+instance Eq LispValue where
+    (==) (Atom v1) (Atom v2) = v1 == v2
+    (==) (List l1) (List l2) = l1 == l2
+    (==) (DottedList l1 lv1) (DottedList l2 lv2) = l1 == l2 && lv1 == lv2
+    (==) (Number n1) (Number n2) = n1 == n2 
+    (==) (String s1) (String s2) = s1 == s2
+    (==) (Character c1) (Character c2) = c1 == c2
+    (==) (FloatingPoint f1) (FloatingPoint f2) = f1 == f2
+    (==) (Bool b1) (Bool b2) = b1 == b2
+    (==) _ _ = False
     
     
     

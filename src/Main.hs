@@ -8,7 +8,7 @@ import System.Directory (getDirectoryContents)
 import System.Environment
 import System.FilePath (takeExtension)
 
-import Parser
+import Parser(evaluateExpression)
 
 
 
