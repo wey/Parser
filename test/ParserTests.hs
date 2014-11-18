@@ -38,5 +38,9 @@ test_parseInteger = assertEqual (readExpression "123") $ Right (Number 123)
 
 test_parseFloat = assertEqual (readExpression "123.456") $ Right (FloatingPoint 123.456)
 
+test_parseFloat2 = assertEqual (Right $ FloatingPoint 123) $ readExpression "123."
+
+test_parseFloat3 = assertEqual (Right $ FloatingPoint 0.456) $ readExpression ".456"
+
 instance Eq ParseError where
     (==) p1 p2 = errorMessages p1 == errorMessages p2

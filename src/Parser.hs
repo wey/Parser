@@ -16,8 +16,8 @@ readExpression = parse parseExpression "lisp"
 parseExpression :: Parser LispValue
 parseExpression = try parseString 
               <|> try parseBool
-              <|> try parseNumber
               <|> try parseFloat
+              <|> try parseNumber
               <|> try parseCharacter
               <|> try parseAtom
     
@@ -63,7 +63,13 @@ parseNumber = do
     return $ Number number 
 
 parseFloat :: Parser LispValue
-parseFloat = parseNumber
+parseFloat = do
+    preCommaDigits <- many digit
+    char '.'
+    afterCommaDigits <- many digit
+    let number = read (pad preCommaDigits ++ "." ++ pad afterCommaDigits) where
+        pad digits = if null digits then "0" else digits 
+    return $ FloatingPoint number 
 
 parseCharacter :: Parser LispValue
 parseCharacter = do
