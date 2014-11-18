@@ -10,33 +10,33 @@ import           Test.Framework
 import           Text.ParserCombinators.Parsec
 import           Text.ParserCombinators.Parsec.Error
 
-test_parseAtom = assertEqual (readExpression "Hallo") $ Right (Atom "Hallo")
+test_parseAtom = assertEqual (Right $ Atom "Hallo") $ readExpression "Hallo"
 
-test_parsePlainString = assertEqual (readExpression "\"Hallo\"") $ Right (String "Hallo")
+test_parsePlainString = assertEqual (Right $ String "Hallo") $ readExpression "\"Hallo\""
 
-test_parseStringWithEscapedQuote = assertEqual (readExpression "\"Halli\\\"Galli\"") $ Right (String "Halli\"Galli")
+test_parseStringWithEscapedQuote = assertEqual (Right $ String "Halli\"Galli") $ readExpression "\"Halli\\\"Galli\""
 
-test_parseStringWithEscapedNewline = assertEqual (readExpression "\"Halli\\nGalli\"") $ Right (String "Halli\nGalli")
+test_parseStringWithEscapedNewline = assertEqual (Right $ String "Halli\nGalli") $ readExpression "\"Halli\\nGalli\""
 
-test_parseStringWithEscapedTab = assertEqual (readExpression "\"Halli\\tGalli\"") $ Right (String "Halli\tGalli")
+test_parseStringWithEscapedTab = assertEqual (Right $ String "Halli\tGalli") $ readExpression "\"Halli\\tGalli\""
 
-test_parseStringWithEscapedBackslash = assertEqual (readExpression "\"Halli\\\\Galli\"") $ Right (String "Halli\\Galli")
+test_parseStringWithEscapedBackslash = assertEqual (Right $ String "Halli\\Galli") $ readExpression "\"Halli\\\\Galli\""
 
-test_parseLowercaseCharacter = assertEqual (readExpression "#\\a") $ Right (Character 'a')
+test_parseLowercaseCharacter = assertEqual (Right $ Character 'a') $ readExpression "#\\a"
 
-test_parseUppercaseCharacter = assertEqual (readExpression "#\\X") $ Right (Character 'X')
+test_parseUppercaseCharacter = assertEqual (Right $ Character 'X') $ readExpression "#\\X"
 
-test_parseSpaceCharacter = assertEqual (readExpression "#\\space") $ Right (Character ' ')
+test_parseSpaceCharacter = assertEqual (Right $ Character ' ') $ readExpression "#\\space"
 
-test_parseNewlineCharacter = assertEqual (readExpression "#\\newline") $ Right (Character '\n')
+test_parseNewlineCharacter = assertEqual (Right $ Character '\n') $ readExpression "#\\newline"
 
-test_parseBooleanTrue = assertEqual (readExpression "#t") $ Right (Bool True)
+test_parseBooleanTrue = assertEqual (Right $ Bool True) $ readExpression "#t"
 
-test_parseBooleanFalse = assertEqual (readExpression "#f") $ Right (Bool False)
+test_parseBooleanFalse = assertEqual (Right $ Bool False) $ readExpression "#f"
 
-test_parseInteger = assertEqual (readExpression "123") $ Right (Number 123)
+test_parseInteger = assertEqual (Right $ Number 123) $ readExpression "123" 
 
-test_parseFloat = assertEqual (readExpression "123.456") $ Right (FloatingPoint 123.456)
+test_parseFloat = assertEqual (Right $ FloatingPoint 123.456) $ readExpression "123.456"
 
 test_parseFloat2 = assertEqual (Right $ FloatingPoint 123) $ readExpression "123."
 
