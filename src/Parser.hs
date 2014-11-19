@@ -29,15 +29,14 @@ parseString = do
     char '"'
     return $ String content
     where
-        validChar = try (escaped '"' '"')
-                <|> try (escaped 'n' '\n')
-                <|> try (escaped 't' '\t')
-                <|> try (escaped '\\' '\\') 
-                <|> noneOf "\""
-        escaped character returnChar = do
-            char '\\'
-            char character
-            return returnChar
+        validChar = tryChar '"' '"' <|> tryChar 'n' '\n' <|> tryChar 't' '\t' <|> tryChar '\\' '\\' <|> noneOf "\""
+        tryChar character replacement = try $ escapedChar character replacement
+        
+escapedChar :: Char -> Char -> Parser Char
+escapedChar character returnCharacter = do
+    char '\\'
+    char character
+    return returnCharacter
 
 parseAtom :: Parser LispValue
 parseAtom = do
@@ -46,15 +45,13 @@ parseAtom = do
     return $ Atom (first : rest)
 
 parseBool :: Parser LispValue
-parseBool = do
-    char '#'
-    trueChar <|> falseChar where
-    trueChar = do
-        char 't'
-        return $ Bool True
-    falseChar = do
-        char 'f'
-        return $ Bool False
+parseBool = try parseTrue <|> try parseFalse where
+    parseTrue = parseBool' 't' True
+    parseFalse = parseBool' 'f' False
+    parseBool' character returnValue = do
+        hash
+        char character
+        return $ Bool returnValue    
     
 parseNumber :: Parser LispValue
 parseNumber = do
@@ -73,8 +70,7 @@ parseFloat = do
 
 parseCharacter :: Parser LispValue
 parseCharacter = do
-    char '#'
-    char '\\'
+    charPrefix
     spaceChar <|> newlineChar <|> singleChar where
         spaceChar = do
             string "space" 
@@ -86,8 +82,16 @@ parseCharacter = do
             character <- anyChar
             return $ Character character
 
+charPrefix :: Parser Char
+charPrefix = do
+    hash
+    char '\\'
+
+hash :: Parser Char
+hash = char '#'
+
 symbol :: Parser Char
-symbol = oneOf "!$%&|*+-/:<=?>@^_~#"
+symbol = oneOf "!$%&*+-/:<=?>@^_~"
 
 spaces :: Parser ()
 spaces = skipMany1 space
